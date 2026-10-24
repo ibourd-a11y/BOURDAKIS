@@ -1,0 +1,65 @@
+
+
+55000 Rem ************** Ο Π Λ Ι Σ Μ Ο Ι  ΥΠΟΣΤΥΛΩΜΑΤΩΝ ΜΕ ΘΛΙΨΗ  ΚΑΙ ΡΟΠΗ ΣΕΙΣΜΙΚΗ ΚΑΤΑΠΟΝΗΣΗ****************
+Rem  ΑΛΓΟΡΙΘΜΟΙ ΔΙΑΣΤΑΣΙΟΛΟΓΗΣΗΣ ΟΠΛΙΣΜΕΝΟΥ ΣΚΥΡΟΔΕΜΑΤΟΣ ΜΕ ΕΠΙΤΡΕΠΟΜΕΝΕΣ ΤΑΣΕΙΣ
+Rem        ΙΩΑΝΝΗΣ ΜΠΟΥΡΔΑΚΗΣ (BOURDAKIS IOANNIS),(BOURDAKIS YANNIS) ΠΟΛΙΤΙΚΟΣ ΜΗΧΑΝΙΚΟΣ ΕΜΠ 1975
+55040 Rem *********ΡΟΥΤΙΝΑ ΣΥΜΜΕΤΡΙΚΟΥ ΟΠΛΙΣΜΟΥ ΣΤΑΔΙΟ ΙΙ ΔΕΔΟΜΕΝΑ M N d b SB SE ΑΠΟ ΣΤΑΤΙΚΗ ΕΦΑΡΜΟΓΗ ********
+Rem *******   Ροπή [Μ] tm   Φορτίο [Ν] ton   [d] cm [b] cm  SB=sb επιτρ Kp/cm^2 SE=se επιτρ  Kp/cm^2 **********
+If M <= 1 Or N <= 1 Or D < 20 Or B < 20 Or SB < 40 Or SE < 1000 Then Cls: Print "M ="; M: Print "N ="; N: Print "b ="; B: Print "d ="; D: Print "SB="; SB: Print "SE="; SE: Print "Ελεγχος σφαλματος δεδομενων": GoSub 21320: Return
+
+55080 Locate 5, 20: Print "  Ροπή [Μ]   Φορτίο [Ν]    [tm - ton]"
+55100 Locate 6, 24: Print M: Locate 6, 36: Print N
+55120 Locate 8, 24: Print "  d           b     [cm] "
+55140 Locate 9, 24: Print D: Locate 9, 36: Print B
+55160 H = D - 4
+55180 M = 10 ^ 5 * M: N = -1000 * N: A = 4: E = (H - A) / 2
+55220 EK = Abs(M / (N * D))
+55240 If EK <= .35 Then 55640
+55250 Locate 2, 45: Print " ΜΕΓΑΛΗ ΕΚΚΕΝΤΡΟΤΗΣ ="; Using "##.##"; EK
+55260 Rem ******* EΞΙΣΩΣΗ BOURDAKIS ΙΟΑΝΝΙΣ 3ου βαθμού του x συντελεστές ΥΠΑΡΧΕΙ ΕΙΔΙΚΗ ΘΕΩΡΗΤΙΚΗ ΤΕΚΜΗΡΙΩΣΗ BOURDAKIS*******
+55280 AA = 2 * SB * B
+55300 BB = -4 * SB * B * D
+55320 CC = 6 * N * (H - A) + 3 * SB * B * (A ^ 2 + H ^ 2) + 12 * (M - N * E)
+55340 DD = 6 * N * A * (A - H) - 6 * D * (M - N * E)
+55360 Rem ********* ΕΠΙΛΥΣΗ Newton-Raphson ΑΛΓΟΡΙΘΜΟΣ BOURDAKIS ******
+55380 XX1 = .5 * H: ik% = 0
+55400 If Abs(AA * XX1 ^ 3 + BB * XX1 ^ 2 + CC * XX1 + DD) < 10 Then GoTo 55480
+55420 If ik% = 15 Then 55480
+55440 Locate 15, 15: Print "     H="; H;: Print "        XX="; Using "##.##"; XX1: ik% = ik% + 1
+55460 XX1 = XX1 - (AA * XX1 ^ 3 + BB * XX1 ^ 2 + CC * XX1 + DD) / (3 * AA * XX1 ^ 2 + 2 * BB * XX1 + CC): GoTo 55400
+55480 Locate 15, 15: Print "      H="; H;: Print "        XX="; Using "##.##"; XX1: Print
+55500 SEA = 15 * (H - XX1) * SB / XX1: SEA1 = 15 * SB * (XX1 - A) / XX1: Locate 17, 10: Print Using "         ####.##"; SEA; SEA1;: Print "  σe - σe'": Print
+55520 XX = XX1
+55540 Rem ****** ΠΟΣΟΣΤΟ ΟΠΛΙΣΜΟΥ *******
+55560 MM = (N + .5 * XX * SB * B) / (B * (H + A) * (SEA - SEA1))
+55570 If SEA > SE Then MM = SEA / SE * MM
+55580 MM = Int(10000 * MM + .5) / 10: Rem ποσοστό επί τοίς χιλίοις
+55590 If MM < 2 Then MM = 2
+55600 Locate 19, 10: Print "         OΠΛIΣMOΣ   μ = μ'= "; Using "##.##"; MM;: Print "  %."
+55610 If MM >= 17 Then Beep: Print: Locate 21, 1: Print "Yπέρβαση ορίου οπλισμού 3% της διατομής ,συνιστάται ΑΛΛΑΓΗ ΔΙΑΤΟΜΗΣ..........": GoSub 55890
+55620 GoSub 55890: Return
+55640 Rem ******** MIKPH EKKENTPOTHS **********
+55650 Locate 2, 45: Print " ΜΙΚΡΗ ΕΚΚΕΝΤΡΟΤΗΣ ="; Int(100 * EK + .5) / 100
+55660 C = Abs(M / N): E = E / D
+55680 For J = 2 To 17 Step .5
+    55700 MM = J / 1000
+    55720 MAXSB = -N / (B * D) * (1 / (1 + 30 * MM) + 6 * C / ((1 + 360 * MM * E ^ 2) * D))
+    55740 MINSB = -N / (B * D) * (1 / (1 + 30 * MM) - 6 * C / ((1 + 360 * MM * E ^ 2) * D))
+    55760 Locate 15, 20: Print "μ=μ΄%        MAXSB          MINSB "
+    55780 MM = 1000 * MM
+    55800 Locate 16, 20: Print Using "##.##        ###.##         ###.##"; MM; MAXSB; MINSB
+    55820 If MM >= 17 Then Beep: Print: Locate 21, 1: Print "Yπέρβαση ορίου οπλισμού 3% της διατομής ,συνιστάται ΑΛΛΑΓΗ ΔΙΑΤΟΜΗΣ..........": GoSub 55890
+    55840 If MAXSB <= SB And -MINSB < SB / 4 Then 55880
+55860 Next J
+55880 GoSub 55890: Return
+
+
+
+
+55890 Rem * * * * * S P A C E   B  A  R
+
+56000 Locate 24, 16, 0, 0, 14: Color 14, 1: Print "   Μ Π Α Ρ Α   Γ Ι Α   Σ Υ Ν Ε X Ε Ι Α   ";
+Locate 25, 17, 0, 0, 14: Color 0, 2: Print "                                         ";: Color 7, 0
+56010 Z$ = InKey$: If Z$ = "" Then 56010
+Return
+
