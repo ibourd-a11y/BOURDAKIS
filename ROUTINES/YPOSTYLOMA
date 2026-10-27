@@ -5,7 +5,7 @@ Rem  ΑΛΓΟΡΙΘΜΟΙ ΔΙΑΣΤΑΣΙΟΛΟΓΗΣΗΣ ΟΠΛΙΣΜΕΝΟΥ 
 Rem        ΙΩΑΝΝΗΣ ΜΠΟΥΡΔΑΚΗΣ (BOURDAKIS IOANNIS),(BOURDAKIS YANNIS) ΠΟΛΙΤΙΚΟΣ ΜΗΧΑΝΙΚΟΣ ΕΜΠ 1975
 55040 Rem *********ΡΟΥΤΙΝΑ ΣΥΜΜΕΤΡΙΚΟΥ ΟΠΛΙΣΜΟΥ ΣΤΑΔΙΟ ΙΙ ΔΕΔΟΜΕΝΑ M N d b SB SE ΑΠΟ ΣΤΑΤΙΚΗ ΕΦΑΡΜΟΓΗ ********
 Rem *******   Ροπή [Μ] tm   Φορτίο [Ν] ton   [d] cm [b] cm  SB=sb επιτρ Kp/cm^2 SE=se επιτρ  Kp/cm^2 **********
-If M <= .1 Or N <= 1 Or D < 20 Or B < 20 Or SB < 60 Or SE < 1400 Then Cls: Print "M ="; M: Print "N ="; N: Print "b ="; B: Print "d ="; D: Print "SB="; SB: Print "SE="; SE: Print "Μή αποδεκτή τιμή": GoSub 55890: Return
+If M < .1 Or N < 1 Or D < 20 Or B < 20 Or SB < 60 Or SE < 1400 Then Cls: Print "M ="; M: Print "N ="; N: Print "b ="; B: Print "d ="; D: Print "SB="; SB: Print "SE="; SE: Print "Μή αποδεκτή τιμή": GoSub 55890: Return
 
 55080 Locate 5, 20: Print "  Ροπή [Μ]   Φορτίο [Ν]    [tm - ton]"
 55100 Locate 6, 24: Print M: Locate 6, 36: Print N
