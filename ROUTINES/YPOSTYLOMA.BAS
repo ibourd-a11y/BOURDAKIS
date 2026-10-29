@@ -1,3 +1,4 @@
+Rem ******** Greek for QB64 ******
 _Font _LoadFont("lucon.ttf", 68, "monospace")
 
 Restore Microsoft_windows_cp1253
